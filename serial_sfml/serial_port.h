@@ -10,8 +10,8 @@
 #include <iostream>
 class serial_port {
 public:
-	void read(std::string& buffer, int count_of_bytes) const;
-	void write(const std::string& message) const;
+	void read(char* buffer, int count_of_bytes) const;
+	void write(const char* message, const int size) const;
 	bool open(const std::string& port_name, int baud_rate);
 	void close() const;
 private:

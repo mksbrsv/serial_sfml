@@ -1,13 +1,13 @@
 #include "serial_port.h"
 
-void serial_port::read(std::string& buffer, int count_of_bytes) const {
+void serial_port::read(char* buffer, int count_of_bytes) const {
 	assert(m_port);
-	m_port->read_some(asio::buffer(buffer.c_str(), count_of_bytes));
+	m_port->read_some(asio::buffer(buffer, count_of_bytes));
 }
 
-void serial_port::write(const std::string& message) const {
+void serial_port::write(const char* message, const int size) const {
 	assert(m_port);
-	m_port->write_some(asio::buffer(message.c_str(), message.size()));
+	m_port->write_some(asio::buffer(message, size));
 }
 
 bool serial_port::open(const std::string& port_name, int baud_rate) {
