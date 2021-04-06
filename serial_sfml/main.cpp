@@ -1,31 +1,37 @@
-#include <iostream>
-#ifdef _WIN32
-#define _WIN32_WINNT 0x0A00
-#endif
-#define ASIO_STANDALONE
-#include <asio.hpp>
-#include <SFML/Graphics.hpp>
-#include "window.h"
+#include <Arduino.h>
 
-using namespace sf;
+const int sw_pin = 2;
+const int x_pin = 0; // 506 - default or 505
+const int y_pin = 1; // 517 - defaulr or 518
+int count_sw = 0; 
 
-int main() {
-	window window("hello", 500, 500);
-	window.display();
- 
-//	asio::io_service io;
-//	asio::serial_port port(io);
-//	asio::error_code ec;
-//	port.open("COM4", ec);
-//	if (!ec) {
-//		std::cout << "success";
-//	}
-//	char p[9];
-//	while (true) {
-//		auto a = asio::buffer(p, 9);
-//		port.read_some(a);
-//		std::cout << p << "\n";
-//	}
-	return 0;
-	
+void setup() {
+    pinMode(sw_pin, INPUT);
+    digitalWrite(sw_pin, HIGH);
+    Serial.begin(9600);
+}
+
+void loop() {
+    int x_coord = analogRead(x_pin);
+    if (x_coord > 505+2) {
+        int a = 1;
+        Serial.write("left56789");
+    }
+    if (x_coord < 505-2) {
+        int a = 2;
+        Serial.write("up3456789");
+        
+    }
+    int y_coord = analogRead(y_pin);
+    if (y_coord > 517+2) {
+        Serial.write("up3456789");
+    }
+    if (y_coord < 517-2) {
+        Serial.write("down56789");
+    }
+   // Serial.print("x: ");
+   // Serial.println(analogRead(x_pin));
+   // Serial.print("y: ");
+   // Serial.println(analogRead(y_pin));
+    delay(100);
 }
