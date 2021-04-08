@@ -55,7 +55,6 @@ sf::FloatRect game_object::get_global_bounds() const {
 	return m_object.getGlobalBounds();
 }
 
-
 void game_object::set_position(int x, int y) {
 	m_object.setPosition(x, y);
 }

@@ -32,8 +32,7 @@ void game::close(sf::Event& event) {
 	}
 }
 
-// "\r\n505\r\n518\r\nÌÌÌÌÌÌÌÌøzÿ"
-
+// "\r\n505\r\n518\r\nÌÌÌÌÌÌÌÌøzÿ" - idk why, but asio return this string from serial port, thats why i have to parse coordinates from string
 std::pair<int, int> game::parse_coordinates(std::string&& str) {
 	int x;
 	std::istringstream(str) >> x;
@@ -98,9 +97,15 @@ sf::Vector2f game::get_velocity(std::pair<int, int>& coordinates) {
 }
 
 void game::display() {
-	set_player(sf::CircleShape(50.f));
+	set_player(sf::CircleShape(25.f));
 	m_player.set_color(sf::Color::Red);
 	m_port.open("COM4", 9600);
+	sf::Texture bg_texture;
+	bg_texture.loadFromFile("background.jpeg");
+	sf::Sprite bg_sprite;
+	bg_sprite.setTexture(bg_texture);
+	bg_sprite.setPosition(0, 0);
+
 	
 	char a[12];
 	while (m_game.isOpen()) {
@@ -109,6 +114,7 @@ void game::display() {
 			close(event);
 		}
 		m_game.clear(sf::Color::Black);
+		m_game.draw(bg_sprite);
 		m_player.draw(m_game);
 		m_port.read(a, 12);
 		std::string buf(a);
