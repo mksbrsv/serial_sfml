@@ -1,50 +1,125 @@
-#include "window.h"
+﻿#include "window.h"
+#include <algorithm>
 
-window::window(const std::string& window_name, int width, int height) :
-	m_window(sf::VideoMode(width, height), window_name) {
+//explanation of speed
+/*
+ * so, as we know default coordinates of joystick is (506, 517) i decided that speed should depends on coordinates
+ * 1. step will be 100, after every 100 i increase our speed
+ * 2. default speed is 1
+ * 3. the formula of the speed is coordinate*0.1 - test
+ */
+
+namespace {
+	int x_default = 506;
+	int y_default = 517;
+	int vel_step = 100;
 }
 
-void window::close(sf::Event& event) {
+game::game(const std::string& window_name, int width, int height) :
+	m_game(sf::VideoMode(width, height), window_name), m_player(0, sf::Color::Black),
+	m_width(width),
+	m_height(height) {
+	m_game.setFramerateLimit(144);
+}
+
+void game::set_player(sf::CircleShape&& object) {
+	m_player.set_object(std::move(object));
+}
+
+void game::close(sf::Event& event) {
 	if (event.type == sf::Event::Closed) {
-		m_window.close();
+		m_game.close();
 	}
 }
 
+// "\r\n505\r\n518\r\nÌÌÌÌÌÌÌÌøzÿ"
 
-void window::display() {
-	sf::CircleShape circle(50.f);
-	circle.setFillColor(sf::Color::Red);
+std::pair<int, int> game::parse_coordinates(std::string&& str) {
+	int x;
+	std::istringstream(str) >> x;
+	str.erase(0, 6);
+	int y;
+	std::istringstream(str) >> y;
+	
+	return {x, y};
+}
+
+void game::collision() {
+	if (m_player.get_position().x < 0)
+		m_player.set_position(0, m_player.get_position().y);
+	if (m_player.get_position().y < 0)
+		m_player.set_position(m_player.get_position().x, 0);
+	if (m_player.get_position().x + m_player.get_global_bounds().width > m_width)
+		m_player.set_position(m_width - m_player.get_global_bounds().width, m_player.get_position().y);
+	if (m_player.get_position().y + m_player.get_global_bounds().height > m_height)
+		m_player.set_position(m_player.get_position().x, m_height - m_player.get_global_bounds().height);
+}
+
+// 506 is default for x, 517 is default for y
+direction game::get_direction(std::pair<int, int>& coordinates) {
+	direction direc = direction::STAY;
+	auto& [x, y] = coordinates;
+	std::cout << "coords: " << x << " " << y << std::endl;
+	if (y >= y_default+2) {
+		direc = direction::UP;
+	}
+	if (y <= y_default-2) {
+		direc = direction::DOWN;
+	}
+	if (x <= x_default-2) {
+		direc = direction::RIGHT;
+	}
+	if (x >= x_default+2) {
+		direc = direction::LEFT;
+	}
+	return direc;
+}
+
+sf::Vector2f game::get_velocity(std::pair<int, int>& coordinates) {
+	auto& [x, y] = coordinates;
+	int x_vel = x * 0.1;
+	int y_vel = y * 0.1;
+	if (x < x_default-2) {
+		int xtmp = 1023 - x;
+		x_vel = xtmp * 0.1;
+	}
+	if (y < y_default-2) {
+		int ytmp = 1023 - y;
+		y_vel = ytmp * 0.1;
+	}
+	if (y > y_default+2) {
+		x_vel = x * 0.1;
+	}
+	if (x > x_default+2) {
+		y_vel = y * 0.1;
+	}
+	return sf::Vector2f(x_vel, y_vel);
+		
+}
+
+void game::display() {
+	set_player(sf::CircleShape(50.f));
+	m_player.set_color(sf::Color::Red);
 	m_port.open("COM4", 9600);
-	char a[10];
-	while (m_window.isOpen()) {
+	
+	char a[12];
+	while (m_game.isOpen()) {
 		sf::Event event;
-		while (m_window.pollEvent(event)) {
+		while (m_game.pollEvent(event)) {
 			close(event);
 		}
-		m_window.clear(sf::Color::Black);
-		m_window.draw(circle);
-		bool lol = event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Right;
-		std::cout << lol;
-		m_port.read(a, 10);
+		m_game.clear(sf::Color::Black);
+		m_player.draw(m_game);
+		m_port.read(a, 12);
 		std::string buf(a);
-		auto i = std::find_if(buf.begin(), buf.end(), isdigit);
-		std::string s;
-		std::copy(buf.begin(), i, std::back_inserter(s));
+		auto coords = parse_coordinates(std::move(buf));
+		direction dir = get_direction(coords);
+		sf::Vector2f velocity = get_velocity(coords);
+		m_player.move(dir, velocity);
+		collision();
 
-		if (s == "right") {
-			circle.move(2.f, 0);
-		}
-		if (s == "left") {
-			circle.move(-2.f, 0);
-		}
-		if (s == "up") {
-			circle.move(0, -2.f);
-		}
-		if (s == "down") {
-			circle.move(0, 2.f);
-		}
-			
-		m_window.display();
+		
+		m_game.display();
 	}
 }
 

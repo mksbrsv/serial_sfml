@@ -16,7 +16,10 @@ bool serial_port::open(const std::string& port_name, int baud_rate) {
 		return false;
 	}
 	m_port = std::make_shared<asio::serial_port>(m_io_service);
-	m_port->open(port_name);
+	asio::error_code ec;
+	m_port->open(port_name, ec);
+	if (ec)
+		std::cout << "Can't open port" << port_name << " : " << ec.message() << std::endl;
 	m_port->set_option(asio::serial_port_base::baud_rate(baud_rate));
 	return true;
 

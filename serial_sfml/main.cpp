@@ -1,20 +1,19 @@
-#include "serial_port.h"
+﻿#include "serial_port.h"
 #include "window.h"
 #include <iostream>
+#include <regex>
 int main() {
 //	serial_port port;
 //	port.open("COM4", 9600);
-//	char s[10];
+//	char s[12];
 //	while (true) {
-//		port.read(s, 10);
-//		std::string buf(s);
-//		auto i = std::find_if(buf.begin(), buf.end(), isdigit);
-//		std::string a;
-//		std::copy(buf.begin(), i, std::back_inserter(a));
+//		port.read(s, 20);
+//		std::string a(s);
 //		std::cout << a;
 //	}
-	window window("hello", 500, 500);
+	game window("hello", 1000, 1000);
 	window.display();
+//	"\r\n505\r\n518\r\nÌÌÌÌÌÌÌÌøzÿ"
 
 
 }

@@ -12,21 +12,27 @@ void setup() {
 }
 
 void loop() {
+    int[2] array;
     int x_coord = analogRead(x_pin);
-    if (x_coord > 505+2) {
-        Serial.print("left0");
-    }
-    if (x_coord < 505-2) {
-        Serial.print("right0");
-        
-    }
     int y_coord = analogRead(y_pin);
-    if (y_coord > 517+2) {
-        Serial.print("up0");
-    }
-    if (y_coord < 517-2) {
-        Serial.print("down0");
-    }
+    array[0] = x_coord;
+    array[1] = y_coord;
+    Serial.write(array, 2);
+   // if (x_coord > 505+2) {
+   //     array[0] = x_coord;
+   //     array[1] = y_coord;
+   //     Serial.write(array, 2);
+   // }
+   // if (x_coord < 505-2) {
+   //     Serial.print("right0");
+   //     
+   // }
+   // if (y_coord > 517+2) {
+   //     Serial.print("up0");
+   // }
+   // if (y_coord < 517-2) {
+   //     Serial.print("down0");
+   // }
    // Serial.print("x: ");
    // Serial.println(analogRead(x_pin));
    // Serial.print("y: ");
