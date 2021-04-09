@@ -111,7 +111,7 @@ void game::display() {
 
 	// background	
 	sf::Texture bg_texture;
-	bg_texture.loadFromFile("background.jpeg");
+	bg_texture.loadFromFile("resourses/background.jpeg");
 	sf::Sprite bg_sprite;
 	bg_sprite.setTexture(bg_texture);
 	bg_sprite.setPosition(0, 0);

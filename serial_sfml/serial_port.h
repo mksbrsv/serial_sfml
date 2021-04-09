@@ -17,6 +17,7 @@ public:
 private:
 	asio::io_service m_io_service;
 	std::shared_ptr<asio::serial_port> m_port;
+	asio::error_code m_error;
 };
 
 #endif
