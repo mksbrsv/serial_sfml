@@ -44,6 +44,7 @@ std::pair<int, int> game::parse_coordinates(std::string&& str) {
 	return {x, y};
 }
 
+// gets collision with the frame, and with the floor
 void game::collision() {
 	if (m_player.get_position().x < 0)
 		m_player.set_position(0, m_player.get_position().y);
@@ -61,6 +62,7 @@ void game::collision() {
 direction game::get_direction(std::pair<int, int>& coordinates) {
 	direction direc = direction::STAY;
 	auto& [x, y] = coordinates;
+	fmt::print("coords: x: {0}, y:{1}", x, y);
 	if (y >= y_default+2) {
 		direc = direction::UP;
 	}

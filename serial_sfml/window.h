@@ -1,6 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 #include <SFML/Graphics.hpp>
+#include <fmt/format.h>
 #include "serial_port.h"
 #include "game_object.h"
 
