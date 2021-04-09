@@ -13,6 +13,7 @@ namespace {
 	int x_default = 506;
 	int y_default = 517;
 	int vel_step = 100;
+	int y_line = 800;
 }
 
 game::game(const std::string& window_name, int width, int height) :
@@ -52,13 +53,14 @@ void game::collision() {
 		m_player.set_position(m_width - m_player.get_global_bounds().width, m_player.get_position().y);
 	if (m_player.get_position().y + m_player.get_global_bounds().height > m_height)
 		m_player.set_position(m_player.get_position().x, m_height - m_player.get_global_bounds().height);
+	if (m_player.get_position().y + m_player.get_global_bounds().height > y_line)
+		m_player.set_position(m_player.get_position().x, y_line - m_player.get_global_bounds().height);
 }
 
 // 506 is default for x, 517 is default for y
 direction game::get_direction(std::pair<int, int>& coordinates) {
 	direction direc = direction::STAY;
 	auto& [x, y] = coordinates;
-	std::cout << "coords: " << x << " " << y << std::endl;
 	if (y >= y_default+2) {
 		direc = direction::UP;
 	}
@@ -97,33 +99,52 @@ sf::Vector2f game::get_velocity(std::pair<int, int>& coordinates) {
 }
 
 void game::display() {
+	// serial
+	m_port.open("COM4", 9600);
+
+	// prepare player
 	set_player(sf::CircleShape(25.f));
 	m_player.set_color(sf::Color::Red);
-	m_port.open("COM4", 9600);
+	m_player.set_position(0, y_line - 25);
+
+	// background	
 	sf::Texture bg_texture;
 	bg_texture.loadFromFile("background.jpeg");
 	sf::Sprite bg_sprite;
 	bg_sprite.setTexture(bg_texture);
 	bg_sprite.setPosition(0, 0);
 
+	// transparent line - floor
+	sf::RectangleShape line;
+	line.setFillColor(sf::Color::Transparent);
+	line.setSize(sf::Vector2f(1000, 3));
+	line.setPosition(0, y_line);
+
 	
 	char a[12];
 	while (m_game.isOpen()) {
+		// close event section
 		sf::Event event;
 		while (m_game.pollEvent(event)) {
 			close(event);
 		}
+
+		// draw section
 		m_game.clear(sf::Color::Black);
 		m_game.draw(bg_sprite);
+		m_game.draw(line);
 		m_player.draw(m_game);
+
+		// get coords section
 		m_port.read(a, 12);
 		std::string buf(a);
 		auto coords = parse_coordinates(std::move(buf));
+
+		// move section
 		direction dir = get_direction(coords);
 		sf::Vector2f velocity = get_velocity(coords);
 		m_player.move(dir, velocity);
 		collision();
-
 		
 		m_game.display();
 	}
