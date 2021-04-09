@@ -7,7 +7,9 @@ It's currently available on Windows because of asio defines
 - SFML
 - asio
 - fmt
+
 If you are using Visual Studio, you can use vcpkg to install that dependencies.
+For arduino I use Visual Studio Code with PlatformIO extenstion.
 
 ## Build
 Just clone this repo and open *.sln file. But first of all you need to install dependencies
