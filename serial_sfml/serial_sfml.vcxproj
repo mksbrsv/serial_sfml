@@ -141,13 +141,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="entity.cpp" />
+    <ClCompile Include="game.cpp" />
     <ClCompile Include="game_object.cpp" />
+    <ClCompile Include="joystick.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="main_player.cpp" />
     <ClCompile Include="serial_port.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="entity.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="game_object.h" />
+    <ClInclude Include="joystick.h" />
+    <ClInclude Include="main_player.h" />
     <ClInclude Include="serial_port.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
